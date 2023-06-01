@@ -194,32 +194,3 @@ func (h Handler) toAccountEvent(ctx context.Context, account tongo.AccountID, tr
 	}
 	return e
 }
-
-func (h Handler) toRisk(ctx context.Context, risk bath.Risk) (*oas.Risk, error) {
-	oasRisk := oas.Risk{
-		Ton:     risk.Ton,
-		Jettons: make([]oas.JettonQuantity, 0, len(risk.Jettons)),
-		Nfts:    make([]oas.NftItem, 0, len(risk.Nfts)),
-	}
-	for master, jq := range risk.Jettons {
-		meta, _ := h.metaCache.getJettonMeta(ctx, master)
-		preview := jettonPreview(h.addressBook, master, meta, h.previewGenerator)
-		quantity := oas.JettonQuantity{
-			Quantity:      jq.Quantity.String(),
-			WalletAddress: convertAccountAddress(jq.WalletAddress, h.addressBook),
-			Jetton:        preview,
-		}
-		oasRisk.Jettons = append(oasRisk.Jettons, quantity)
-	}
-	if len(risk.Nfts) > 0 {
-		items, err := h.storage.GetNFTs(ctx, risk.Nfts)
-		if err != nil {
-			return nil, err
-		}
-		for _, item := range items {
-			nft := convertNFT(ctx, item, h.addressBook, h.previewGenerator, h.metaCache)
-			oasRisk.Nfts = append(oasRisk.Nfts, nft)
-		}
-	}
-	return &oasRisk, nil
-}
