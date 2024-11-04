@@ -198,6 +198,39 @@ paths:
                 example: { }
         'default':
           $ref: '#/components/responses/Error'
+  /webhooks/{webhook_id}/mempool/subscribe:
+    post:
+      description: "subscribe to notifications for mempool messages"
+      operationId: webhookMempoolSubscribe
+      parameters:
+        - $ref: '#/components/parameters/tokenQuery'
+        - $ref: '#/components/parameters/webhookId'
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                example: { }
+        'default':
+          $ref: '#/components/responses/Error'
+  /webhooks/{webhook_id}/mempool/unsubscribe:
+    post:
+      operationId: webhookMempoolUnsubscribe
+      parameters:
+        - $ref: '#/components/parameters/tokenQuery'
+        - $ref: '#/components/parameters/webhookId'
+      responses:
+        '200':
+          description: ""
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                example: { }
+        'default':
+          $ref: '#/components/responses/Error'
 
 components:
   parameters:
@@ -310,6 +343,7 @@ components:
             - id
             - endpoint
             - subscribed_accounts
+            - subscribed_to_mempool
             properties:
               id:
                 type: integer
@@ -318,6 +352,8 @@ components:
                 type: string
               subscribed_accounts:
                 type: integer
+              subscribed_to_mempool:
+                type: boolean
     WebhookAccountTxSubscriptions:
       type: object
       required:
