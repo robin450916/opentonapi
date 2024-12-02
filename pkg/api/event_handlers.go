@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/tonkeeper/tongo/abi"
+	"go.uber.org/zap"
 	"net/http"
 	"strings"
 	"time"
@@ -353,7 +354,13 @@ func (h *Handler) EmulateMessageToAccountEvent(ctx context.Context, request *oas
 		return nil, toError(http.StatusBadRequest, err)
 	}
 	hash, err := c.HashString()
+	if err != nil {
+		return nil, toError(http.StatusBadRequest, err)
+	}
 	trace, _, err := h.storage.GetTraceWithState(ctx, hash)
+	if err != nil {
+		h.logger.Warn("get trace from storage: ", zap.Error(err))
+	}
 	if trace == nil {
 		configBase64, err := h.storage.TrimmedConfigBase64()
 		if err != nil {
@@ -379,7 +386,7 @@ func (h *Handler) EmulateMessageToAccountEvent(ctx context.Context, request *oas
 		if err != nil {
 			return nil, toError(http.StatusInternalServerError, err)
 		}
-		err = h.storage.SaveTraceWithState(hash, trace, []abi.MethodInvocation{}, 24*time.Hour)
+		err = h.storage.SaveTraceWithState(ctx, hash, trace, []abi.MethodInvocation{}, 24*time.Hour)
 		if err != nil {
 			fmt.Println("trace not saved: ", err)
 		}
@@ -407,8 +414,14 @@ func (h *Handler) EmulateMessageToEvent(ctx context.Context, request *oas.Emulat
 	}
 	trace, prs := h.mempoolEmulate.traces.Get(hash)
 	if !prs {
-		hs, _ := c.HashString()
+		hs, err := c.HashString()
+		if err != nil {
+			return nil, toError(http.StatusBadRequest, err)
+		}
 		trace, _, err = h.storage.GetTraceWithState(ctx, hs)
+		if err != nil {
+			h.logger.Warn("get trace from storage: ", zap.Error(err))
+		}
 		if trace == nil {
 			var m tlb.Message
 			if err := tlb.Unmarshal(c, &m); err != nil {
@@ -438,7 +451,7 @@ func (h *Handler) EmulateMessageToEvent(ctx context.Context, request *oas.Emulat
 			if err != nil {
 				return nil, toError(http.StatusInternalServerError, err)
 			}
-			err = h.storage.SaveTraceWithState(hs, trace, []abi.MethodInvocation{}, 24*time.Hour)
+			err = h.storage.SaveTraceWithState(ctx, hs, trace, []abi.MethodInvocation{}, 24*time.Hour)
 			if err != nil {
 				fmt.Println("trace not saved: ", err)
 			}
@@ -468,7 +481,13 @@ func (h *Handler) EmulateMessageToTrace(ctx context.Context, request *oas.Emulat
 	trace, prs := h.mempoolEmulate.traces.Get(hash)
 	if !prs {
 		hs, err := c.HashString()
+		if err != nil {
+			return nil, toError(http.StatusBadRequest, err)
+		}
 		trace, _, err = h.storage.GetTraceWithState(ctx, hs)
+		if err != nil {
+			h.logger.Warn("get trace from storage: ", zap.Error(err))
+		}
 		if trace == nil {
 			var m tlb.Message
 			err = tlb.Unmarshal(c, &m)
@@ -499,7 +518,7 @@ func (h *Handler) EmulateMessageToTrace(ctx context.Context, request *oas.Emulat
 			if err != nil {
 				return nil, toError(http.StatusInternalServerError, err)
 			}
-			err = h.storage.SaveTraceWithState(hs, trace, []abi.MethodInvocation{}, 24*time.Hour)
+			err = h.storage.SaveTraceWithState(ctx, hs, trace, []abi.MethodInvocation{}, 24*time.Hour)
 			if err != nil {
 				fmt.Println("trace not saved: ", err)
 			}
@@ -591,7 +610,13 @@ func (h *Handler) EmulateMessageToWallet(ctx context.Context, request *oas.Emula
 	}
 
 	hash, err := msgCell.HashString()
+	if err != nil {
+		return nil, toError(http.StatusBadRequest, err)
+	}
 	trace, _, err := h.storage.GetTraceWithState(ctx, hash)
+	if err != nil {
+		h.logger.Warn("get trace from storage: ", zap.Error(err))
+	}
 	if trace == nil {
 		configBase64, err := h.storage.TrimmedConfigBase64()
 		if err != nil {
@@ -633,7 +658,7 @@ func (h *Handler) EmulateMessageToWallet(ctx context.Context, request *oas.Emula
 		if err != nil {
 			return nil, toError(http.StatusInternalServerError, err)
 		}
-		err = h.storage.SaveTraceWithState(hash, trace, []abi.MethodInvocation{}, 24*time.Hour)
+		err = h.storage.SaveTraceWithState(ctx, hash, trace, []abi.MethodInvocation{}, 24*time.Hour)
 		if err != nil {
 			fmt.Println("trace not saved: ", err)
 		}
