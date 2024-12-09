@@ -7416,15 +7416,6 @@ components:
             decimals:
               type: integer
               example: 5
-    ExtraCurrencies:
-      type: object
-      required:
-        - extra_currencies
-      properties:
-        extra_currencies:
-          type: array
-          items:
-            $ref: '#/components/schemas/ExtraCurrency'
   
   responses:
     Error:

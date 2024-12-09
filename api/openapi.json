@@ -3235,20 +3235,6 @@
     ],
     "type": "object"
    },
-   "ExtraCurrencies": {
-    "properties": {
-     "extra_currencies": {
-      "items": {
-       "$ref": "#/components/schemas/ExtraCurrency"
-      },
-      "type": "array"
-     }
-    },
-    "required": [
-     "extra_currencies"
-    ],
-    "type": "object"
-   },
    "ExtraCurrency": {
     "properties": {
      "amount": {
