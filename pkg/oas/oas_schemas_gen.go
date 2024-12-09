@@ -8577,6 +8577,7 @@ type Message struct {
 	Bounce      bool              `json:"bounce"`
 	Bounced     bool              `json:"bounced"`
 	Value       int64             `json:"value"`
+	ExtraValue  []ExtraCurrency   `json:"extra_value"`
 	FwdFee      int64             `json:"fwd_fee"`
 	IhrFee      int64             `json:"ihr_fee"`
 	Destination OptAccountAddress `json:"destination"`
@@ -8620,6 +8621,11 @@ func (s *Message) GetBounced() bool {
 // GetValue returns the value of Value.
 func (s *Message) GetValue() int64 {
 	return s.Value
+}
+
+// GetExtraValue returns the value of ExtraValue.
+func (s *Message) GetExtraValue() []ExtraCurrency {
+	return s.ExtraValue
 }
 
 // GetFwdFee returns the value of FwdFee.
@@ -8710,6 +8716,11 @@ func (s *Message) SetBounced(val bool) {
 // SetValue sets the value of Value.
 func (s *Message) SetValue(val int64) {
 	s.Value = val
+}
+
+// SetExtraValue sets the value of ExtraValue.
+func (s *Message) SetExtraValue(val []ExtraCurrency) {
+	s.ExtraValue = val
 }
 
 // SetFwdFee sets the value of FwdFee.

@@ -163,6 +163,7 @@ type Message struct {
 	Bounce            bool
 	Bounced           bool
 	Value             int64
+	ExtraValue        ExtraCurrencies
 	FwdFee            int64
 	IhrFee            int64
 	ImportFee         int64

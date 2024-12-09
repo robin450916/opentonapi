@@ -4168,6 +4168,12 @@
      "destination": {
       "$ref": "#/components/schemas/AccountAddress"
      },
+     "extra_value": {
+      "items": {
+       "$ref": "#/components/schemas/ExtraCurrency"
+      },
+      "type": "array"
+     },
      "fwd_fee": {
       "example": 5681002,
       "format": "int64",
