@@ -735,6 +735,12 @@
       "example": {},
       "type": "object"
      },
+     "extra_balance": {
+      "items": {
+       "$ref": "#/components/schemas/ExtraCurrency"
+      },
+      "type": "array"
+     },
      "get_methods": {
       "example": [
        "get_item_data"
@@ -2518,10 +2524,10 @@
       "type": "string"
      },
      "extra_balance": {
-      "additionalProperties": {
-       "type": "string"
+      "items": {
+       "$ref": "#/components/schemas/ExtraCurrency"
       },
-      "type": "object"
+      "type": "array"
      },
      "frozen_hash": {
       "example": "088b436a846d92281734236967970612f87fbd64a2cd3573107948379e8e4161",
@@ -3226,6 +3232,48 @@
      "is_scam",
      "lt",
      "in_progress"
+    ],
+    "type": "object"
+   },
+   "ExtraCurrencies": {
+    "properties": {
+     "extra_currencies": {
+      "items": {
+       "$ref": "#/components/schemas/ExtraCurrency"
+      },
+      "type": "array"
+     }
+    },
+    "required": [
+     "extra_currencies"
+    ],
+    "type": "object"
+   },
+   "ExtraCurrency": {
+    "properties": {
+     "amount": {
+      "example": "1000000000",
+      "type": "string",
+      "x-js-format": "bigint"
+     },
+     "decimals": {
+      "example": 5,
+      "type": "integer"
+     },
+     "id": {
+      "example": 239,
+      "format": "int32",
+      "type": "integer"
+     },
+     "name": {
+      "example": "FMS",
+      "type": "string"
+     }
+    },
+    "required": [
+     "id",
+     "amount",
+     "decimals"
     ],
     "type": "object"
    },

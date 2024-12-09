@@ -64,8 +64,9 @@ func (s *AccStatusChange) UnmarshalText(data []byte) error {
 
 // Ref: #/components/schemas/Account
 type Account struct {
-	Address string `json:"address"`
-	Balance int64  `json:"balance"`
+	Address      string          `json:"address"`
+	Balance      int64           `json:"balance"`
+	ExtraBalance []ExtraCurrency `json:"extra_balance"`
 	// {'USD': 1, 'IDR': 1000}.
 	CurrenciesBalance OptAccountCurrenciesBalance `json:"currencies_balance"`
 	// Unix timestamp.
@@ -89,6 +90,11 @@ func (s *Account) GetAddress() string {
 // GetBalance returns the value of Balance.
 func (s *Account) GetBalance() int64 {
 	return s.Balance
+}
+
+// GetExtraBalance returns the value of ExtraBalance.
+func (s *Account) GetExtraBalance() []ExtraCurrency {
+	return s.ExtraBalance
 }
 
 // GetCurrenciesBalance returns the value of CurrenciesBalance.
@@ -154,6 +160,11 @@ func (s *Account) SetAddress(val string) {
 // SetBalance sets the value of Balance.
 func (s *Account) SetBalance(val int64) {
 	s.Balance = val
+}
+
+// SetExtraBalance sets the value of ExtraBalance.
+func (s *Account) SetExtraBalance(val []ExtraCurrency) {
+	s.ExtraBalance = val
 }
 
 // SetCurrenciesBalance sets the value of CurrenciesBalance.
@@ -3926,7 +3937,7 @@ func (s *BlockchainConfig9) SetMandatoryParams(val []int32) {
 type BlockchainRawAccount struct {
 	Address             string                              `json:"address"`
 	Balance             int64                               `json:"balance"`
-	ExtraBalance        OptBlockchainRawAccountExtraBalance `json:"extra_balance"`
+	ExtraBalance        []ExtraCurrency                     `json:"extra_balance"`
 	Code                OptString                           `json:"code"`
 	Data                OptString                           `json:"data"`
 	LastTransactionLt   int64                               `json:"last_transaction_lt"`
@@ -3948,7 +3959,7 @@ func (s *BlockchainRawAccount) GetBalance() int64 {
 }
 
 // GetExtraBalance returns the value of ExtraBalance.
-func (s *BlockchainRawAccount) GetExtraBalance() OptBlockchainRawAccountExtraBalance {
+func (s *BlockchainRawAccount) GetExtraBalance() []ExtraCurrency {
 	return s.ExtraBalance
 }
 
@@ -4003,7 +4014,7 @@ func (s *BlockchainRawAccount) SetBalance(val int64) {
 }
 
 // SetExtraBalance sets the value of ExtraBalance.
-func (s *BlockchainRawAccount) SetExtraBalance(val OptBlockchainRawAccountExtraBalance) {
+func (s *BlockchainRawAccount) SetExtraBalance(val []ExtraCurrency) {
 	s.ExtraBalance = val
 }
 
@@ -4045,17 +4056,6 @@ func (s *BlockchainRawAccount) SetStorage(val AccountStorageInfo) {
 // SetLibraries sets the value of Libraries.
 func (s *BlockchainRawAccount) SetLibraries(val []BlockchainRawAccountLibrariesItem) {
 	s.Libraries = val
-}
-
-type BlockchainRawAccountExtraBalance map[string]string
-
-func (s *BlockchainRawAccountExtraBalance) init() BlockchainRawAccountExtraBalance {
-	m := *s
-	if m == nil {
-		m = map[string]string{}
-		*s = m
-	}
-	return m
 }
 
 type BlockchainRawAccountLibrariesItem struct {
@@ -5396,6 +5396,54 @@ func (s *Event) SetLt(val int64) {
 // SetInProgress sets the value of InProgress.
 func (s *Event) SetInProgress(val bool) {
 	s.InProgress = val
+}
+
+// Ref: #/components/schemas/ExtraCurrency
+type ExtraCurrency struct {
+	ID       int32     `json:"id"`
+	Amount   string    `json:"amount"`
+	Name     OptString `json:"name"`
+	Decimals int       `json:"decimals"`
+}
+
+// GetID returns the value of ID.
+func (s *ExtraCurrency) GetID() int32 {
+	return s.ID
+}
+
+// GetAmount returns the value of Amount.
+func (s *ExtraCurrency) GetAmount() string {
+	return s.Amount
+}
+
+// GetName returns the value of Name.
+func (s *ExtraCurrency) GetName() OptString {
+	return s.Name
+}
+
+// GetDecimals returns the value of Decimals.
+func (s *ExtraCurrency) GetDecimals() int {
+	return s.Decimals
+}
+
+// SetID sets the value of ID.
+func (s *ExtraCurrency) SetID(val int32) {
+	s.ID = val
+}
+
+// SetAmount sets the value of Amount.
+func (s *ExtraCurrency) SetAmount(val string) {
+	s.Amount = val
+}
+
+// SetName sets the value of Name.
+func (s *ExtraCurrency) SetName(val OptString) {
+	s.Name = val
+}
+
+// SetDecimals sets the value of Decimals.
+func (s *ExtraCurrency) SetDecimals(val int) {
+	s.Decimals = val
 }
 
 // Ref: #/components/schemas/FoundAccounts
@@ -11540,52 +11588,6 @@ func (o OptBlockchainConfig9) Get() (v BlockchainConfig9, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptBlockchainConfig9) Or(d BlockchainConfig9) BlockchainConfig9 {
-	if v, ok := o.Get(); ok {
-		return v
-	}
-	return d
-}
-
-// NewOptBlockchainRawAccountExtraBalance returns new OptBlockchainRawAccountExtraBalance with value set to v.
-func NewOptBlockchainRawAccountExtraBalance(v BlockchainRawAccountExtraBalance) OptBlockchainRawAccountExtraBalance {
-	return OptBlockchainRawAccountExtraBalance{
-		Value: v,
-		Set:   true,
-	}
-}
-
-// OptBlockchainRawAccountExtraBalance is optional BlockchainRawAccountExtraBalance.
-type OptBlockchainRawAccountExtraBalance struct {
-	Value BlockchainRawAccountExtraBalance
-	Set   bool
-}
-
-// IsSet returns true if OptBlockchainRawAccountExtraBalance was set.
-func (o OptBlockchainRawAccountExtraBalance) IsSet() bool { return o.Set }
-
-// Reset unsets value.
-func (o *OptBlockchainRawAccountExtraBalance) Reset() {
-	var v BlockchainRawAccountExtraBalance
-	o.Value = v
-	o.Set = false
-}
-
-// SetTo sets value to v.
-func (o *OptBlockchainRawAccountExtraBalance) SetTo(v BlockchainRawAccountExtraBalance) {
-	o.Set = true
-	o.Value = v
-}
-
-// Get returns value and boolean that denotes whether value was set.
-func (o OptBlockchainRawAccountExtraBalance) Get() (v BlockchainRawAccountExtraBalance, ok bool) {
-	if !o.Set {
-		return v, false
-	}
-	return o.Value, true
-}
-
-// Or returns value if set, or given parameter if does not.
-func (o OptBlockchainRawAccountExtraBalance) Or(d BlockchainRawAccountExtraBalance) BlockchainRawAccountExtraBalance {
 	if v, ok := o.Get(); ok {
 		return v
 	}
